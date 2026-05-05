@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>head and Neck Mid Exam </title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background:#f7f7f7;
+        margin:0;
+        padding:20px;
+    }
+    .container {
+        max-width: 800px;
+        margin: auto;
+        text-align:center;
+    }
+    h1 {
+        text-align:center;
+        color:#1e3a8a;
+        font-size:24px;
+        margin:10px 0 5px 0;
+    }
+    .timer-box {
+        background:#e8f0fe;
+        border-left:4px solid #1e3a8a;
+        padding:10px;
+        margin-top:10px;
+        text-align:center;
+        font-weight:bold;
+        border-radius:6px;
+        font-size:14px;
+    }
+    .question-box {
+        background:white;
+        padding:20px;
+        border-radius:10px;
+        margin-top:20px;
+        box-shadow:0 2px 5px rgba(0,0,0,0.1);
+        text-align:left;
+    }
+    #question-text {
+        color:#1e3a8a;
+        font-size:18px;
+        margin-bottom:15px;
+    }
+    button {
+        width:100%;
+        margin:6px 0;
+        padding:12px;
+        font-size:16px;
+        border-radius:6px;
+        border:1px solid #ccc;
+        cursor:pointer;
+        background:white;
+        text-align:left;
+        box-sizing:border-box;
+    }
+    .correct {
+        background:#d1fad1 !important;
+        border-color:#22c55e !important;
+    }
+    .wrong {
+        background:#ffe1e1 !important;
+        border-color:#ef4444 !important;
+    }
+    .nav-btns {
+        display:flex;
+        gap:10px;
+        margin-top:20px;
+    }
+    .nav-btns button {
+        flex:1;
+        text-align:center;
+    }
+    #results-box {
+        display:none;
+        background:rgb(53, 219, 44);
+        border-radius:20px;
+        padding:20px;
+        margin-top:20px;
+        box-shadow:0 2px 5px rgba(0,0,0,0.1);
+        text-align:center;
+    }
+    #explanation {
+        margin-top:10px;
+        color:#444;
+        font-size:14px;
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+        body { padding:10px; }
+        h1 { font-size:20px; }
+        .question-box { padding:15px; }
+        button { font-size:15px; padding:10px; }
+        .timer-box { font-size:13px; }
+    }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Head and Neck Mid Exam</h1>
+
+    <div class="timer-box">
+        Total Exam Time (Auto): <span id="timer">--:--</span>
+    </div>
+
+    <div id="quiz-box" class="question-box">
+        <h2 id="question-text">Loading...</h2>
+        <div id="options"></div>
+        <div id="explanation"></div>
+    </div>
+
+    <div class="nav-btns">
+        <button id="prev" disabled>Previous</button>
+        <button id="finish" style="background:#dc2626; color:white;">Finish</button>
+        <button id="next" disabled style="background:#1e3a8a; color:white;">Next</button>
+    </div>
+
+    <div id="results-box">
+        <h2>Quiz Complete</h2>
+        <p id="score"></p>
+        <p id="time-used"></p>
+        <button onclick="location.reload()">Restart</button>
+    </div>
+
+</div>
+
+<script>
+/* QUESTIONS */
+const questions = [
+  {
+    "q": "Which cranial fossa contains the sella turcica and accommodates the pituitary gland?",
+    "options": [
+      "Anterior cranial fossa",
+      "Middle cranial fossa",
+      "Posterior cranial fossa",
+      "Infratemporal fossa"
+    ],
+    "answer": "Middle cranial fossa",
+    "explanation": "The sella turcica is a depression in the body of the sphenoid bone located in the middle cranial fossa and houses the pituitary gland."
+  },
+  {
+    "q": "Which bone is described as the keystone of the cranial floor because it articulates with almost every other cranial bone?",
+    "options": [
+      "Ethmoid",
+      "Temporal",
+      "Sphenoid",
+      "Occipital"
+    ],
+    "answer": "Sphenoid",
+    "explanation": "The sphenoid bone is centrally located and articulates with all other cranial bones, making it the keystone of the cranial floor."
+  },
+  {
+    "q": "A patient with raised intracranial pressure develops ipsilateral pupillary dilation and decreasing level of consciousness. Which anatomical event best explains this pattern?",
+    "options": [
+      "Cerebellar tonsils descending through the foramen magnum",
+      "Medial temporal lobe displaced through the tentorial notch",
+      "Frontal lobe displaced beneath the falx cerebri",
+      "Occipital lobe compressed against the transverse sinus"
+    ],
+    "answer": "Medial temporal lobe displaced through the tentorial notch",
+    "explanation": "This describes uncal herniation, where the medial temporal lobe compresses the oculomotor nerve, causing ipsilateral pupil dilation and reduced consciousness."
+  },
+  {
+    "q": "A 22-year-old male presents with an epidural hematoma following trauma to the pterion. Which vessel is most likely injured?",
+    "options": [
+      "Ophthalmic artery",
+      "Middle meningeal artery",
+      "Internal jugular vein",
+      "Vertebral artery"
+    ],
+    "answer": "Middle meningeal artery",
+    "explanation": "The middle meningeal artery runs deep to the pterion and is commonly torn in fractures at this site, leading to epidural hematoma."
+  },
+  {
+    "q": "Which structure passes through the foramen ovale?",
+    "options": [
+      "Maxillary nerve (CN V2)",
+      "Mandibular nerve (CN V3)",
+      "Facial nerve (CN VII)",
+      "Hypoglossal nerve (CN XII)"
+    ],
+    "answer": "Mandibular nerve (CN V3)",
+    "explanation": "The mandibular division of the trigeminal nerve exits the cranial cavity through the foramen ovale."
+  },
+  {
+    "q": "Which opening transmits both the facial nerve (CN VII) and vestibulocochlear nerve (CN VIII)?",
+    "options": [
+      "Optic canal",
+      "Jugular foramen",
+      "Internal acoustic meatus",
+      "Superior orbital fissure"
+    ],
+    "answer": "Internal acoustic meatus",
+    "explanation": "The internal acoustic meatus in the petrous temporal bone transmits CN VII and CN VIII."
+  },
+  {
+    "q": "In subarachnoid hemorrhage, where does blood accumulate?",
+    "options": [
+      "Between skull and dura mater",
+      "Between dura mater and arachnoid mater",
+      "Between arachnoid mater and pia mater",
+      "Within brain parenchyma"
+    ],
+    "answer": "Between arachnoid mater and pia mater",
+    "explanation": "Subarachnoid hemorrhage occurs in the subarachnoid space where cerebrospinal fluid circulates."
+  },
+  {
+    "q": "During subclavian vein catheterization, which structure is at highest risk of injury?",
+    "options": [
+      "Esophagus",
+      "Apex of lung",
+      "Thoracic duct (right side)",
+      "Vertebral artery"
+    ],
+    "answer": "Apex of lung",
+    "explanation": "The pleural dome (apex of lung) lies close to the subclavian vein and is at risk of puncture, causing pneumothorax."
+  },
+  {
+    "q": "Compression between the anterior and middle scalene muscles most likely affects which structure?",
+    "options": [
+      "Subclavian vein",
+      "Phrenic nerve",
+      "Brachial plexus",
+      "Internal jugular vein"
+    ],
+    "answer": "Brachial plexus",
+    "explanation": "The brachial plexus and subclavian artery pass between the scalene muscles and are compressed in thoracic outlet syndrome."
+  },
+  {
+    "q": "Infection in the prevertebral space can spread most directly to which region?",
+    "options": [
+      "Cranial cavity",
+      "Mediastinum",
+      "Axilla",
+      "Oral cavity"
+    ],
+    "answer": "Mediastinum",
+    "explanation": "The prevertebral space communicates inferiorly with the mediastinum, allowing infection to spread."
+  },
+  {
+    "q": "Which fascial layer encloses sternocleidomastoid and trapezius?",
+    "options": [
+      "Pretracheal layer",
+      "Prevertebral layer",
+      "Investing layer",
+      "Alar fascia"
+    ],
+    "answer": "Investing layer",
+    "explanation": "The investing layer of deep cervical fascia surrounds the entire neck and encloses SCM and trapezius."
+  },
+  {
+    "q": "Which fascial layer encloses the vertebral column and associated muscles?",
+    "options": [
+      "Investing layer",
+      "Pretracheal layer",
+      "Prevertebral layer",
+      "Buccopharyngeal fascia"
+    ],
+    "answer": "Prevertebral layer",
+    "explanation": "The prevertebral fascia surrounds the vertebral column and deep neck muscles."
+  },
+  {
+    "q": "A fracture of the cribriform plate is most likely associated with which additional finding?",
+    "options": [
+      "Loss of smell",
+      "Facial paralysis",
+      "Hoarseness",
+      "Loss of hearing"
+    ],
+    "answer": "Loss of smell",
+    "explanation": "Olfactory nerve fibers pass through the cribriform plate, so fracture leads to anosmia."
+  },
+  {
+    "q": "Which structure provides attachment for the falx cerebri anteriorly?",
+    "options": [
+      "Foramen magnum",
+      "Crista galli",
+      "Greater wing of sphenoid",
+      "Petrous ridge"
+    ],
+    "answer": "Crista galli",
+    "explanation": "The falx cerebri attaches anteriorly to the crista galli of the ethmoid bone."
+  },
+  {
+    "q": "A crescent-shaped hemorrhage crossing suture lines is most likely caused by which mechanism?",
+    "options": [
+      "Rupture of middle meningeal artery",
+      "Tearing of bridging veins",
+      "Rupture of berry aneurysm",
+      "Choroid plexus injury"
+    ],
+    "answer": "Tearing of bridging veins",
+    "explanation": "Subdural hematomas result from tearing of bridging veins and can cross suture lines."
+  },
+  {
+    "q": "Which foramen is associated with facial nerve exit after it leaves the skull?",
+    "options": [
+      "Internal acoustic meatus",
+      "Stylomastoid foramen",
+      "Jugular foramen",
+      "Foramen ovale"
+    ],
+    "answer": "Stylomastoid foramen",
+    "explanation": "The facial nerve exits the skull through the stylomastoid foramen."
+  },
+  {
+    "q": "Injury to which nerve causes inability to elevate the shoulder after posterior triangle trauma?",
+    "options": [
+      "Hypoglossal nerve",
+      "Accessory nerve",
+      "Phrenic nerve",
+      "Vagus nerve"
+    ],
+    "answer": "Accessory nerve",
+    "explanation": "The spinal accessory nerve supplies trapezius; injury leads to shoulder droop."
+  },
+  {
+    "q": "Which triangle contains the carotid bifurcation?",
+    "options": [
+      "Submental triangle",
+      "Carotid triangle",
+      "Muscular triangle",
+      "Occipital triangle"
+    ],
+    "answer": "Carotid triangle",
+    "explanation": "The carotid triangle contains the common carotid artery and its bifurcation."
+  },
+  {
+    "q": "Which triangle contains the infrahyoid (strap) muscles?",
+    "options": [
+      "Submental triangle",
+      "Muscular triangle",
+      "Carotid triangle",
+      "Occipital triangle"
+    ],
+    "answer": "Muscular triangle",
+    "explanation": "The muscular triangle contains the infrahyoid muscles and thyroid gland."
+  },
+  {
+    "q": "A pulsatile mass above the clavicle in the posterior triangle most likely involves which artery?",
+    "options": [
+      "Facial artery",
+      "Subclavian artery",
+      "Lingual artery",
+      "Superior thyroid artery"
+    ],
+    "answer": "Subclavian artery",
+    "explanation": "The subclavian artery runs in the lower posterior triangle near the clavicle."
+  },
+  {
+    "q": "Which structure accompanies the optic nerve in the optic canal?",
+    "options": [
+      "Ophthalmic artery",
+      "Facial nerve",
+      "Maxillary nerve",
+      "Internal jugular vein"
+    ],
+    "answer": "Ophthalmic artery",
+    "explanation": "The optic canal transmits the optic nerve and ophthalmic artery."
+  },
+  {
+    "q": "Which part of the brachial plexus is commonly compressed in scalene syndrome?",
+    "options": [
+      "Upper trunk",
+      "Middle trunk",
+      "Lower trunk",
+      "Medial cord"
+    ],
+    "answer": "Lower trunk",
+    "explanation": "The lower trunk (C8–T1) is most vulnerable in thoracic outlet syndrome."
+  },
+  {
+    "q": "Which structure lies posterior to scalenus anterior?",
+    "options": [
+      "Phrenic nerve",
+      "Subclavian vein",
+      "Subclavian artery",
+      "Anterior jugular vein"
+    ],
+    "answer": "Subclavian artery",
+    "explanation": "The subclavian artery passes between anterior and middle scalene muscles, posterior to scalenus anterior."
+  },
+  {
+    "q": "Which muscle is considered the key landmark at the root of the neck?",
+    "options": [
+      "Scalenus medius",
+      "Longus colli",
+      "Scalenus anterior",
+      "Rectus capitis lateralis"
+    ],
+    "answer": "Scalenus anterior",
+    "explanation": "Scalenus anterior is an important landmark dividing subclavian vessels and guiding surgical approaches."
+  },
+  {
+    "q": "Which muscles form the posterior boundary of the retropharyngeal space?",
+    "options": [
+      "Scalene muscles",
+      "Prevertebral muscles",
+      "Sternocleidomastoid",
+      "Infrahyoid muscles"
+    ],
+    "answer": "Prevertebral muscles",
+    "explanation": "The prevertebral muscles and fascia form the posterior boundary of the retropharyngeal space."
+  },
+  {
+    "q": "Which structure forms the posterior boundary of the root of the neck?",
+    "options": [
+      "Manubrium sterni",
+      "First ribs",
+      "T1 vertebra",
+      "C7 vertebra"
+    ],
+    "answer": "T1 vertebra",
+    "explanation": "The root of the neck is bounded posteriorly by the first thoracic vertebra."
+  },
+  {
+    "q": "Rupture of the middle meningeal artery typically results in which hemorrhage?",
+    "options": [
+      "Subdural hematoma",
+      "Subarachnoid hemorrhage",
+      "Epidural hematoma",
+      "Intracerebral hemorrhage"
+    ],
+    "answer": "Epidural hematoma",
+    "explanation": "The middle meningeal artery lies between skull and dura, so rupture causes epidural bleeding."
+  },
+  {
+    "q": "Which triangle is best for surgical access to the carotid bifurcation?",
+    "options": [
+      "Submental triangle",
+      "Carotid triangle",
+      "Muscular triangle",
+      "Occipital triangle"
+    ],
+    "answer": "Carotid triangle",
+    "explanation": "The carotid triangle provides direct access to the carotid vessels."
+  },
+  {
+    "q": "Through which opening does the mental nerve emerge?",
+    "options": [
+      "Mandibular foramen",
+      "Mental foramen",
+      "Foramen ovale",
+      "Infraorbital foramen"
+    ],
+    "answer": "Mental foramen",
+    "explanation": "The mental nerve exits the mandible through the mental foramen to supply the chin and lower lip."
+  },
+  {
+    "q": "Which structure passes through the mandibular foramen?",
+    "options": [
+      "Lingual nerve",
+      "Inferior alveolar nerve",
+      "Mental nerve",
+      "Buccal nerve"
+    ],
+    "answer": "Inferior alveolar nerve",
+    "explanation": "The inferior alveolar nerve enters the mandibular canal via the mandibular foramen."
+  }
+];
+// replace questions////////////
+
+/* STATE */
+let index = 0;
+let score = 0;
+let answered = Array(questions.length).fill(null);
+
+/* AUTO TIME = #questions × 1.5 minutes */
+let timeLeft = questions.length * 90;
+
+function startTimer() {
+    const timerEl = document.getElementById("timer");
+    const x = setInterval(() => {
+        let m = Math.floor(timeLeft / 60);
+        let s = timeLeft % 60;
+        timerEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        timeLeft--;
+
+        if (timeLeft < 0) {
+            clearInterval(x);
+            finishQuiz(true);
+        }
+    }, 1000);
+}
+
+startTimer();
+
+/* DISPLAY QUESTION */
+function loadQuestion() {
+    const q = questions[index];
+    document.getElementById("question-text").textContent = `Q${index+1}. ${q.q}`;
+    const optBox = document.getElementById("options");
+    const exp = document.getElementById("explanation");
+
+    optBox.innerHTML = "";
+    exp.textContent = "";
+
+    q.options.forEach((opt)=>{
+        let btn = document.createElement("button");
+        btn.textContent = opt;
+
+        if (answered[index] !== null) {
+            btn.disabled = true;
+            if (opt === q.answer) btn.classList.add("correct");
+            if (opt === answered[index] && opt !== q.answer) btn.classList.add("wrong");
+        } else {
+            btn.onclick = ()=> selectOption(opt);
+        }
+
+        optBox.appendChild(btn);
+    });
+
+    if (answered[index] !== null) {
+        exp.innerHTML = `<b>Explanation:</b> ${q.explanation}`;
+        document.getElementById("next").disabled = false;
+    } else {
+        document.getElementById("next").disabled = true;
+    }
+
+    document.getElementById("prev").disabled = index === 0;
+}
+
+/* SELECT */
+function selectOption(opt) {
+    const q = questions[index];
+    if (answered[index] !== null) return;
+    answered[index] = opt;
+    if (opt === q.answer) score++;
+    loadQuestion();
+}
+
+/* NAV */
+document.getElementById("prev").onclick = ()=>{
+    if (index > 0) { index--; loadQuestion(); }
+};
+document.getElementById("next").onclick = ()=>{
+    if (index < questions.length - 1) { index++; loadQuestion(); }
+    else finishQuiz(false);
+};
+document.getElementById("finish").onclick = ()=> finishQuiz(false);
+
+/* FINISH */
+function finishQuiz(auto=false) {
+    document.getElementById("quiz-box").style.display = "none";
+    document.querySelector(".nav-btns").style.display = "none";
+
+    document.getElementById("results-box").style.display = "block";
+    document.getElementById("score").textContent = `Your Score: ${score} / ${questions.length}`;
+
+    let used = (questions.length*90 - timeLeft);
+    if (used < 0) used = questions.length*90;
+    let m = Math.floor(used/60);
+    let s = used%60;
+
+    document.getElementById("time-used").textContent =
+        `Time Used: ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} ${auto ? "(Time Over)" : ""}`;
+}
+
+/* START */
+loadQuestion();
+</script>
+
+</body>
+</html>
